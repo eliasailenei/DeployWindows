@@ -1,0 +1,9 @@
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\Debug\DeployWindows.Clean.resources
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\Debug\DeployWindows.Properties.Resources.resources
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\Debug\DeployWindows.csproj.GenerateResource.cache
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\Debug\DeployWindows.csproj.CoreCompileInputs.cache
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\bin\Debug\DeployWindows.exe.config
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\bin\Debug\DeployWindows.exe
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\bin\Debug\DeployWindows.pdb
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\Debug\DeployWindows.exe
+C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\Debug\DeployWindows.pdb
