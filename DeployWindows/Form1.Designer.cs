@@ -48,9 +48,10 @@ namespace DeployWindows
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft YaHei", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(328, 76);
+            this.label5.Location = new System.Drawing.Point(246, 62);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(430, 36);
+            this.label5.Size = new System.Drawing.Size(343, 30);
             this.label5.TabIndex = 26;
             this.label5.Text = "Choose what version you want:";
             // 
@@ -58,42 +59,47 @@ namespace DeployWindows
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft YaHei", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(367, 295);
+            this.label4.Location = new System.Drawing.Point(275, 240);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(0, 36);
+            this.label4.Size = new System.Drawing.Size(0, 30);
             this.label4.TabIndex = 25;
             // 
             // progressBar2
             // 
-            this.progressBar2.Location = new System.Drawing.Point(56, 334);
+            this.progressBar2.Location = new System.Drawing.Point(42, 271);
+            this.progressBar2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(851, 55);
+            this.progressBar2.Size = new System.Drawing.Size(638, 45);
             this.progressBar2.TabIndex = 24;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft YaHei", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(367, 144);
+            this.label3.Location = new System.Drawing.Point(275, 117);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(353, 36);
+            this.label3.Size = new System.Drawing.Size(279, 30);
             this.label3.TabIndex = 23;
             this.label3.Text = "Current process: awaiting";
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(56, 183);
+            this.progressBar1.Location = new System.Drawing.Point(42, 149);
+            this.progressBar1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(851, 55);
+            this.progressBar1.Size = new System.Drawing.Size(638, 45);
             this.progressBar1.TabIndex = 22;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft YaHei", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(328, 76);
+            this.label1.Location = new System.Drawing.Point(246, 62);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(621, 36);
+            this.label1.Size = new System.Drawing.Size(496, 30);
             this.label1.TabIndex = 21;
             this.label1.Text = "If the download didn\'t finish yet, please wait...";
             // 
@@ -101,9 +107,10 @@ namespace DeployWindows
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft YaHei", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(314, 24);
+            this.label2.Location = new System.Drawing.Point(236, 20);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(236, 52);
+            this.label2.Size = new System.Drawing.Size(187, 41);
             this.label2.TabIndex = 20;
             this.label2.Text = "Thank you!";
             // 
@@ -116,29 +123,33 @@ namespace DeployWindows
             this.listBox1.BackColor = System.Drawing.SystemColors.GrayText;
             this.listBox1.Font = new System.Drawing.Font("Microsoft YaHei", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 30;
-            this.listBox1.Location = new System.Drawing.Point(323, 119);
+            this.listBox1.ItemHeight = 24;
+            this.listBox1.Location = new System.Drawing.Point(242, 97);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(321, 214);
+            this.listBox1.Size = new System.Drawing.Size(242, 172);
             this.listBox1.TabIndex = 28;
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // button1
             // 
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.button1.Location = new System.Drawing.Point(373, 365);
+            this.button1.Location = new System.Drawing.Point(280, 297);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(217, 76);
+            this.button1.Size = new System.Drawing.Size(163, 62);
             this.button1.TabIndex = 27;
             this.button1.Text = "Choose";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Clean
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GrayText;
-            this.ClientSize = new System.Drawing.Size(1008, 579);
+            this.ClientSize = new System.Drawing.Size(756, 470);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.progressBar2);
@@ -148,6 +159,7 @@ namespace DeployWindows
             this.Controls.Add(this.label2);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.button1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Clean";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Clean_Load);

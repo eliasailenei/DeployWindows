@@ -67,18 +67,13 @@ namespace DeployWindows
                 if (attribute == "topass")
                 {
                     topass = value;
-                    MessageBox.Show(topass);
-                    MessageBox.Show(value);
                 }
                 else if (attribute == "disks")
                 {
                     disks = value;
-                    MessageBox.Show(disks);
-                    MessageBox.Show(value);
                 }
                 else if (attribute == "isExpress")
                 {
-                    MessageBox.Show(value);
                     if (value == "False" | value == "false")
                     {
                         isExpress = false;
@@ -92,7 +87,7 @@ namespace DeployWindows
             }
             if (matches.Count == 0)
             {
-                MessageBox.Show("No matching attributes found in the input.");
+                MessageBox.Show("Error, restart program.");
             }
         }
 
