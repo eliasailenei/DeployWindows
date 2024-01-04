@@ -8,3 +8,13 @@ C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\x64\Debug\DeployWind
 C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.csproj.CoreCompileInputs.cache
 C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.exe
 C:\Users\remus\source\repos\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.pdb
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\bin\x64\Debug\DeployWindows.exe.config
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\bin\x64\Debug\DeployWindows.exe
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\bin\x64\Debug\DeployWindows.pdb
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.csproj.AssemblyReference.cache
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.Clean.resources
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.Properties.Resources.resources
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.csproj.GenerateResource.cache
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.csproj.CoreCompileInputs.cache
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.exe
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.pdb

@@ -17,12 +17,9 @@ namespace DeployWindows
 {
     public partial class Clean : Form
     {
-        private bool invis;
         private Rectangle lab1, lab2, lab3, lab4, lab5, prog1, prog2, bttn1, lstbx1;
-        private int index;
         private Size form;
-        private int totalProg;
-        private int prog;
+        private int totalProg, index;
         private bool isoYes = false;
         private string esdNo = @"T:\contin\test.esd";
         private string esdYes = @"T:\contin\\sources\install.esd";
@@ -31,9 +28,8 @@ namespace DeployWindows
         private string ApplyDir = @"C:\";
         private string ISOLoc = @"T:\contin\test.iso";
         private string ISOExtract = @"T:\contin\";
-        public bool isExpress = false;
-        public string topass;
-        public string disks;
+        public bool isExpress, invis;
+        public string topass, disks;
         // input should be like this : >DeployWindows.exe topass='--ESDMode=True --WinVer=Windows_10 --Release=10,_version_22H2_[19045.2965]_(Updated_May_2023) --Language=English' disks='0' isExpress='False'
 
         // We need to skip the language setting in some way
@@ -96,6 +92,16 @@ namespace DeployWindows
 
         }
 
+        public bool checkIfExist(string path)
+        {
+            if (File.Exists(path))
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
         private async void Clean_Load(object sender, EventArgs e)
         {
             setArgs();
@@ -303,7 +309,7 @@ namespace DeployWindows
             label2.Text = "Done, rebooting now!";
             string deltemploc = "C:\\tempdelete.bat";
             string deltempcontents = @"@echo off" + Environment.NewLine +
-             @"echo select disk " + disks[1] + " > del.txt" + Environment.NewLine +
+             @"echo select disk " + disks + " > del.txt" + Environment.NewLine + //error here
              @"echo sel part 2 >> del.txt" + Environment.NewLine +
              @"echo delete partition override >> del.txt" + Environment.NewLine +
              @"echo sel part 1 >> del.txt " + Environment.NewLine +
@@ -330,17 +336,21 @@ namespace DeployWindows
             @"        </component>" + Environment.NewLine +
             @"    </settings>" + Environment.NewLine +
             @"</unattend>";
+            string postInstall = " ";
             if (!isExpress)
             {
                 File.WriteAllText(xmlLoc, xmlContent);
+            } else if (isExpress)
+            {
+                postInstall = @"copy T:\contin\installer.bat C:\Windows\system32\installer.bat";
             }
             string outFile = @"X:\bootable.bat";
-            string content = @"
-            @echo off" + Environment.NewLine +
+            string content = "@echo off" + Environment.NewLine +
             @"ECHO Adding MBR..." + Environment.NewLine +
             @"copy T:\contin\unattend.xml C:\Windows\Panther" + Environment.NewLine +
+            postInstall + Environment.NewLine +
             @"C:\Windows\System32\bcdboot C:\Windows" + Environment.NewLine +
-            @"nowpeutil.exe reboot" + Environment.NewLine;
+            @"wpeutil.exe reboot" + Environment.NewLine;
             File.WriteAllText(outFile, content);
             ProcessStartInfo diskp = new ProcessStartInfo();
             diskp.FileName = "cmd.exe";
