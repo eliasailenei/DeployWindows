@@ -10,17 +10,18 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-
-
+using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 
 namespace DeployWindows
 {
     public partial class Clean : Form
     {
-        private Rectangle lab1, lab2, lab3, lab4, lab5, prog1, prog2, bttn1, lstbx1;
+        private Rectangle lab1, lab2, lab3, lab4, lb5, lab6, prog1, prog2, bttn1, lstbx1;
         private Size form;
         private int totalProg, index;
         private bool isoYes = false;
+        private bool selectedin = false;
         private string esdNo = @"T:\contin\test.esd";
         private string esdYes = @"T:\contin\\sources\install.esd";
         private string[] argss = Environment.GetCommandLineArgs();
@@ -108,16 +109,17 @@ namespace DeployWindows
             label3.Text = "Current Task: Downloading | Current Progress: estimating";
             label4.Text = "Do not panic if frozen! WinPE is not optimized for high loads!";
 
-            await Task.Run(() => Downld());
+           await Task.Run(() => Downld());
 
             label3.Text = "Current Task: ISO check | Current Progress: estimating";
             progressBar2.Value = 0;
             label4.Text = "Do not panic if frozen! WinPE is not optimized for high loads!";
-            await Task.Run(() => ISOcheck());
+           await Task.Run(() => ISOcheck());
             label3.Text = "Current Task: Installing | Current Progress: estimating";
             progressBar2.Value = 0;
             label4.Text = "Estimating progress...";
             label5.Visible = false;
+            label6.Visible = false;
             listBox1.Visible = false;
             button1.Visible = false;
             await Task.Run(() => DISMDiag());
@@ -221,14 +223,62 @@ namespace DeployWindows
 
                 await Task.Run(() =>
                 {
+                    timeToDownload();
                     process.Start();
                     process.BeginOutputReadLine();
                     process.WaitForExit();
+                    
                 });
             }
 
 
         }
+        private async void timeToDownload()
+        {
+            await Task.Run(() =>
+            {
+                int time = 0;
+                int timeLeft = 30;
+
+                label6.BeginInvoke(new Action(() => label6.Visible = true));
+                label6.BeginInvoke(new Action(() => label6.Text = "TEST"));
+
+                Thread countdownThread = new Thread(() =>
+                {
+                    while (timeLeft > 0)
+                    {
+                        if (!selectedin)
+                        {
+                            if (time < 30)
+                            {
+                                timeLeft--;
+                                time++;
+                                label6.BeginInvoke(new Action(() =>
+                                {
+                                    label6.Text = "You have " + timeLeft.ToString() + " seconds to choose or index " + (listBox1.Items.Count).ToString() + " is chosen.";
+                                }));
+
+                                Thread.Sleep(1000);
+                            }
+                        } else if(selectedin)
+                        {
+                            label6.BeginInvoke(new Action(() => label6.Visible = false));
+                            break;
+                        }
+                    }
+                    if (timeLeft == 0)
+                    {
+                        label6.BeginInvoke(new Action(() => label6.Visible = false));
+                        index = listBox1.Items.Count;
+                        button1_Click(null , null);
+
+                    }
+                });
+                countdownThread.Start();
+            });
+        }
+
+
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -239,10 +289,11 @@ namespace DeployWindows
         private async void button1_Click(object sender, EventArgs e)
         {
             invis = true;
+            selectedin = true;
             MakeInvis(invis);
-            label5.Visible = false;
-            listBox1.Visible = false;
-            button1.Visible = false;
+            label5.BeginInvoke(new Action(() =>label5.Visible = false));
+            listBox1.BeginInvoke(new Action(() => listBox1.Visible = false));
+            button1.BeginInvoke(new Action(() => button1.Visible = false));
             await Task.Run(() => Install());
         }
 
@@ -319,7 +370,15 @@ namespace DeployWindows
              @"diskpart /s del.txt" + Environment.NewLine +
               @"del %0";
             File.WriteAllText(deltemploc, deltempcontents);
-            Directory.CreateDirectory("C:\\Windows\\Panther");
+            if (!Directory.Exists("C:\\Windows\\Panther"))
+            {
+                Directory.CreateDirectory("C:\\Windows\\Panther");
+
+            }
+            if (!Directory.Exists("C:\\Windows\\Setup\\Scripts\\"))
+            {
+                Directory.CreateDirectory("C:\\Windows\\Setup\\Scripts\\");
+            }
             string xmlLoc = "T:\\contin\\unattend.xml";
             string xmlContent = @"<?xml version=""1.0"" encoding=""utf-8""?>" + Environment.NewLine +
             @"<unattend xmlns=""urn:schemas-microsoft-com:unattend"">" + Environment.NewLine +
@@ -336,19 +395,45 @@ namespace DeployWindows
             @"        </component>" + Environment.NewLine +
             @"    </settings>" + Environment.NewLine +
             @"</unattend>";
-            string postInstall = " ";
             if (!isExpress)
             {
                 File.WriteAllText(xmlLoc, xmlContent);
-            } else if (isExpress)
+            } 
+            try
             {
-                postInstall = @"copy T:\contin\installer.bat C:\Windows\system32\installer.bat";
+                File.Move("T:\\contin\\Extras\\setup.exe", "C:\\Windows\\Setup\\Scripts\\Ninite.exe");
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            try
+            {
+                File.Move("T:\\contin\\installer.bat", "C:\\Windows\\Setup\\Scripts\\SetupComplete.cmd");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            try
+            {
+                File.Move("T:\\contin\\autorun.exe", "C:\\Windows\\Setup\\Scripts\\autorun.exe");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            try
+            {
+                File.Move("T:\\contin\\test.au3", "C:\\Windows\\Setup\\Scripts\\autorun.au3");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
             string outFile = @"X:\bootable.bat";
             string content = "@echo off" + Environment.NewLine +
             @"ECHO Adding MBR..." + Environment.NewLine +
             @"copy T:\contin\unattend.xml C:\Windows\Panther" + Environment.NewLine +
-            postInstall + Environment.NewLine +
             @"C:\Windows\System32\bcdboot C:\Windows" + Environment.NewLine +
             @"wpeutil.exe reboot" + Environment.NewLine;
             File.WriteAllText(outFile, content);
@@ -460,7 +545,8 @@ namespace DeployWindows
             lab2 = new Rectangle(label2.Location, label2.Size);
             lab3 = new Rectangle(label3.Location, label3.Size);
             lab4 = new Rectangle(label4.Location, label4.Size);
-            lab5 = new Rectangle(label5.Location, label5.Size);
+            lb5 = new Rectangle(label5.Location, label5.Size);
+            lab6 = new Rectangle(label6.Location, label6.Size);
             prog1 = new Rectangle(progressBar1.Location, progressBar1.Size);
             prog2 = new Rectangle(progressBar2.Location, progressBar2.Size);
             bttn1 = new Rectangle(button1.Location, button1.Size);
@@ -478,7 +564,8 @@ namespace DeployWindows
             resizeControl(lab2, label2);
             resizeControl(lab3, label3);
             resizeControl(lab4, label4);
-            resizeControl(lab5, label5);
+            resizeControl(lb5, label5);
+            resizeControl(lab6, label6);
             resizeControl(prog1, progressBar1);
             resizeControl(prog2, progressBar2);
             resizeControl(bttn1, button1);
