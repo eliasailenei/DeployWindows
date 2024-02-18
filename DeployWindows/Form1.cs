@@ -12,28 +12,27 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
-
+using CustomConfig;
 namespace DeployWindows
 {
     public partial class Clean : Form
     {
         private Rectangle lab1, lab2, lab3, lab4, lb5, lab6, prog1, prog2, bttn1, lstbx1;
+        char cLetter, tLetter;
         private Size form;
         private int totalProg, index;
         private bool isoYes = false;
         private bool selectedin = false;
-        private string esdNo = @"T:\contin\test.esd";
-        private string esdYes = @"T:\contin\\sources\install.esd";
+        private string esdNo;
+        private string esdYes;
         private string[] argss = Environment.GetCommandLineArgs();
-        private string wimLoc = @"T:\contin\\sources\install.wim";
-        private string ApplyDir = @"C:\";
-        private string ISOLoc = @"T:\contin\test.iso";
-        private string ISOExtract = @"T:\contin\";
+        private string wimLoc;
+        private string ApplyDir;
+        private string ISOLoc;
+        private string ISOExtract;
         public bool isExpress, invis;
         public string topass, disks;
         // input should be like this : >DeployWindows.exe topass='--ESDMode=True --WinVer=Windows_10 --Release=10,_version_22H2_[19045.2965]_(Updated_May_2023) --Language=English' disks='0' isExpress='False'
-
-        // We need to skip the language setting in some way
         private void setArgs()
         {
             StringBuilder inp = new StringBuilder();
@@ -105,6 +104,16 @@ namespace DeployWindows
         }
         private async void Clean_Load(object sender, EventArgs e)
         {
+           DriveLetters letters = new DriveLetters(Environment.SystemDirectory + "\\driveLetters.txt");
+            cLetter = letters.CLetter;
+            tLetter = letters.TLetter;
+            esdNo = @tLetter.ToString() +":\\contin\\test.esd";
+esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
+            esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
+            wimLoc = @tLetter.ToString() +":\\contin\\sources\\install.wim";
+            ApplyDir = @cLetter.ToString() +":\\";
+            ISOLoc = @tLetter.ToString() +":\\contin\test.iso";
+            ISOExtract = @tLetter.ToString() + ":\\contin\\";
             setArgs();
             label3.Text = "Current Task: Downloading | Current Progress: estimating";
             label4.Text = "Do not panic if frozen! WinPE is not optimized for high loads!";
@@ -223,6 +232,12 @@ namespace DeployWindows
 
                 await Task.Run(() =>
                 {
+                    do
+                    {
+                        Console.WriteLine("User still in progress");
+                        System.Threading.Thread.Sleep(3000); 
+                    }
+                    while (!File.Exists(Environment.SystemDirectory + "\\done.txt"));
                     timeToDownload();
                     process.Start();
                     process.BeginOutputReadLine();
@@ -241,7 +256,7 @@ namespace DeployWindows
                 int timeLeft = 30;
 
                 label6.BeginInvoke(new Action(() => label6.Visible = true));
-                label6.BeginInvoke(new Action(() => label6.Text = "TEST"));
+                label6.BeginInvoke(new Action(() => label6.Text = tLetter.ToString() +"EST"));
 
                 Thread countdownThread = new Thread(() =>
                 {
@@ -358,7 +373,7 @@ namespace DeployWindows
                 });
             } // from here 
             label2.Text = "Done, rebooting now!";
-            string deltemploc = "C:\\tempdelete.bat";
+            string deltemploc = cLetter.ToString() +":\\tempdelete.bat";
             string deltempcontents = @"@echo off" + Environment.NewLine +
              @"echo select disk " + disks + " > del.txt" + Environment.NewLine + //error here
              @"echo sel part 2 >> del.txt" + Environment.NewLine +
@@ -367,19 +382,18 @@ namespace DeployWindows
              @"echo extend >> del.txt" + Environment.NewLine +
              @"echo exit >> del.txt" + Environment.NewLine +
              @"diskpart /s del.txt" + Environment.NewLine +
-             @"diskpart /s del.txt" + Environment.NewLine +
               @"del %0";
             File.WriteAllText(deltemploc, deltempcontents);
-            if (!Directory.Exists("C:\\Windows\\Panther"))
+            if (!Directory.Exists(cLetter.ToString() +":\\Windows\\Panther"))
             {
-                Directory.CreateDirectory("C:\\Windows\\Panther");
+                Directory.CreateDirectory(cLetter.ToString() +":\\Windows\\Panther");
 
             }
-            if (!Directory.Exists("C:\\Windows\\Setup\\Scripts\\"))
+            if (!Directory.Exists(cLetter.ToString() +":\\Windows\\Setup\\Scripts\\"))
             {
-                Directory.CreateDirectory("C:\\Windows\\Setup\\Scripts\\");
+                Directory.CreateDirectory(cLetter.ToString() +":\\Windows\\Setup\\Scripts\\");
             }
-            string xmlLoc = "T:\\contin\\unattend.xml";
+            string xmlLoc = tLetter.ToString() +":\\contin\\unattend.xml";
             string xmlContent = @"<?xml version=""1.0"" encoding=""utf-8""?>" + Environment.NewLine +
             @"<unattend xmlns=""urn:schemas-microsoft-com:unattend"">" + Environment.NewLine +
             @"    <settings pass=""oobeSystem"">" + Environment.NewLine +
@@ -401,14 +415,14 @@ namespace DeployWindows
             } 
             try
             {
-                File.Move("T:\\contin\\Extras\\setup.exe", "C:\\Windows\\Setup\\Scripts\\Ninite.exe");
+                File.Move(tLetter.ToString() +":\\contin\\Extras\\setup.exe", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\Ninite.exe");
             } catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
             try
             {
-                File.Move("T:\\contin\\installer.bat", "C:\\Windows\\Setup\\Scripts\\SetupComplete.cmd");
+                File.Move(tLetter.ToString() +":\\contin\\installer.bat", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\SetupComplete.cmd");
             }
             catch (Exception ex)
             {
@@ -416,7 +430,7 @@ namespace DeployWindows
             }
             try
             {
-                File.Move("T:\\contin\\autorun.exe", "C:\\Windows\\Setup\\Scripts\\autorun.exe");
+                File.Move(tLetter.ToString() +":\\contin\\autorun.exe", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\autorun.exe");
             }
             catch (Exception ex)
             {
@@ -424,7 +438,7 @@ namespace DeployWindows
             }
             try
             {
-                File.Move("T:\\contin\\test.au3", "C:\\Windows\\Setup\\Scripts\\autorun.au3");
+                File.Move(tLetter.ToString() +":\\contin\\test.au3", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\autorun.au3");
             }
             catch (Exception ex)
             {
@@ -433,8 +447,8 @@ namespace DeployWindows
             string outFile = @"X:\bootable.bat";
             string content = "@echo off" + Environment.NewLine +
             @"ECHO Adding MBR..." + Environment.NewLine +
-            @"copy T:\contin\unattend.xml C:\Windows\Panther" + Environment.NewLine +
-            @"C:\Windows\System32\bcdboot C:\Windows" + Environment.NewLine +
+            @"copy " + tLetter.ToString() + ":\\contin\\unattend.xml " + cLetter.ToString() +":\\Windows\\Panther" + Environment.NewLine +
+            @cLetter.ToString() +":\\Windows\\System32\bcdboot "  + cLetter.ToString() + ":\\Windows" + Environment.NewLine +
             @"wpeutil.exe reboot" + Environment.NewLine;
             File.WriteAllText(outFile, content);
             ProcessStartInfo diskp = new ProcessStartInfo();

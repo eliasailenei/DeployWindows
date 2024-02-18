@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeployWindows", "DeployWindows\DeployWindows.csproj", "{42BE4B69-FA2A-4268-B605-6E64DC73B62D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHolder", "..\PortableISO\mainUI\CustomHolder\CustomHolder.csproj", "{5C2E9996-066E-47B3-9038-31BD84C52BC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{42BE4B69-FA2A-4268-B605-6E64DC73B62D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{42BE4B69-FA2A-4268-B605-6E64DC73B62D}.Release|x64.ActiveCfg = Release|x64
 		{42BE4B69-FA2A-4268-B605-6E64DC73B62D}.Release|x64.Build.0 = Release|x64
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Debug|x64.Build.0 = Debug|Any CPU
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Release|x64.ActiveCfg = Release|Any CPU
+		{5C2E9996-066E-47B3-9038-31BD84C52BC2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
