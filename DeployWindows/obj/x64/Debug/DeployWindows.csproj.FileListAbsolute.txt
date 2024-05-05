@@ -57,4 +57,4 @@ C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\bin\x64\Debug\Sys
 C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\bin\x64\Debug\System.Text.Encodings.Web.xml
 C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.csproj.SuggestedBindingRedirects.cache
 C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.exe.config
-C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWindows.csproj.CopyComplete
+C:\Users\remus\source\repos\Clones\DeployWindows\DeployWindows\obj\x64\Debug\DeployWi.DDF51206.Up2Date

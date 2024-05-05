@@ -1,0 +1,89 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{42BE4B69-FA2A-4268-B605-6E64DC73B62D}|DeployWindows\\DeployWindows.csproj|C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\deploywindows\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{42BE4B69-FA2A-4268-B605-6E64DC73B62D}|DeployWindows\\DeployWindows.csproj|solutionrelative:deploywindows\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42BE4B69-FA2A-4268-B605-6E64DC73B62D}|DeployWindows\\DeployWindows.csproj|C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\deploywindows\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{42BE4B69-FA2A-4268-B605-6E64DC73B62D}|DeployWindows\\DeployWindows.csproj|solutionrelative:deploywindows\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5C2E9996-066E-47B3-9038-31BD84C52BC2}|..\\PortableISO\\mainUI\\CustomHolder\\CustomHolder.csproj|c:\\users\\remus\\source\\repos\\clones\\portableiso\\mainui\\customholder\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{42BE4B69-FA2A-4268-B605-6E64DC73B62D}|DeployWindows\\DeployWindows.csproj|C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\deploywindows\\app.manifest||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{42BE4B69-FA2A-4268-B605-6E64DC73B62D}|DeployWindows\\DeployWindows.csproj|solutionrelative:deploywindows\\app.manifest||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Class1.cs",
+              "DocumentMoniker": "C:\\Users\\remus\\source\\repos\\Clones\\PortableISO\\mainUI\\CustomHolder\\Class1.cs",
+              "RelativeDocumentMoniker": "..\\PortableISO\\mainUI\\CustomHolder\\Class1.cs",
+              "ToolTip": "C:\\Users\\remus\\source\\repos\\Clones\\PortableISO\\mainUI\\CustomHolder\\Class1.cs",
+              "RelativeToolTip": "..\\PortableISO\\mainUI\\CustomHolder\\Class1.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAALkAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-20T18:33:34.531Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\DeployWindows\\Form1.cs",
+              "RelativeDocumentMoniker": "DeployWindows\\Form1.cs",
+              "ToolTip": "C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\DeployWindows\\Form1.cs",
+              "RelativeToolTip": "DeployWindows\\Form1.cs",
+              "ViewState": "AQIAAFACAAAAAAAAAAAIwHECAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-02T10:18:53.526Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "app.manifest",
+              "DocumentMoniker": "C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\DeployWindows\\app.manifest",
+              "RelativeDocumentMoniker": "DeployWindows\\app.manifest",
+              "ToolTip": "C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\DeployWindows\\app.manifest",
+              "RelativeToolTip": "DeployWindows\\app.manifest",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001203|",
+              "WhenOpened": "2024-02-20T12:08:03.247Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\DeployWindows\\Form1.cs",
+              "RelativeDocumentMoniker": "DeployWindows\\Form1.cs",
+              "ToolTip": "C:\\Users\\remus\\source\\repos\\Clones\\DeployWindows\\DeployWindows\\Form1.cs [Design]",
+              "RelativeToolTip": "DeployWindows\\Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-02T10:18:50.048Z",
+              "EditorCaption": " [Design]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

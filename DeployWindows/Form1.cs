@@ -13,6 +13,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 using CustomConfig;
+using System.Net;
+using System.IO.Compression;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 namespace DeployWindows
 {
     public partial class Clean : Form
@@ -28,17 +31,17 @@ namespace DeployWindows
         private string[] argss = Environment.GetCommandLineArgs();
         private string wimLoc;
         private string ApplyDir;
-        private string ISOLoc;
+        private string ISOLoc, folder;
         private string ISOExtract;
         public bool isExpress, invis;
         public string topass, disks;
         // input should be like this : >DeployWindows.exe topass='--ESDMode=True --WinVer=Windows_10 --Release=10,_version_22H2_[19045.2965]_(Updated_May_2023) --Language=English' disks='0' isExpress='False'
-        private void setArgs()
+        private void setArgs() // this method will take the args that is needed for this program to work
         {
             StringBuilder inp = new StringBuilder();
             try
             {
-                foreach (string word in argss)
+                foreach (string word in argss) // spaces out the command line arguments
                 {
                     inp.Append(word);
                     inp.Append(" ");
@@ -49,11 +52,12 @@ namespace DeployWindows
             {
 
             }
-            string args = inp.ToString();
+            string args = inp.ToString(); // save to string
             // input 
-            string pattern = @"(\w+)='([^']+)'";
+            string pattern = @"(\w+)='([^']+)'"; // this will split up the args into their corresponding variables so name='John' age='30' city='New York'
 
-            MatchCollection matches = Regex.Matches(args, pattern);
+
+            MatchCollection matches = Regex.Matches(args, pattern); // make the matches
 
             foreach (Match match in matches)
             {
@@ -62,17 +66,17 @@ namespace DeployWindows
 
                 if (attribute == "topass")
                 {
-                    topass = value;
+                    topass = value; // sets the toPass value which will be given to MSWISO
                 }
                 else if (attribute == "disks")
                 {
-                    disks = value;
+                    disks = value; // this is so we know what drive to target
                 }
                 else if (attribute == "isExpress")
                 {
                     if (value == "False" | value == "false")
                     {
-                        isExpress = false;
+                        isExpress = false; // we need to know if its an Express install, so that we don't add junk
                     }
                     else if (value == "True" | value == "true") {
 
@@ -92,7 +96,7 @@ namespace DeployWindows
 
         }
 
-        public bool checkIfExist(string path)
+        public bool checkIfExist(string path) // simple method to check if a file exists
         {
             if (File.Exists(path))
             {
@@ -104,47 +108,43 @@ namespace DeployWindows
         }
         private async void Clean_Load(object sender, EventArgs e)
         {
-           DriveLetters letters = new DriveLetters(Environment.SystemDirectory + "\\driveLetters.txt");
-            cLetter = letters.CLetter;
-            tLetter = letters.TLetter;
-            esdNo = @tLetter.ToString() +":\\contin\\test.esd";
+           DriveLetters letters = new DriveLetters(Environment.SystemDirectory + "\\driveLetters.txt"); // sets the drive letters from the previous setup when the user was asked to input new letters when there was a clash
+            cLetter = letters.CLetter; // set the new C letter
+            tLetter = letters.TLetter; // set the new T letter
+            esdNo = @tLetter.ToString() +":\\contin\\test.esd"; // from here
 esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
             esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
             wimLoc = @tLetter.ToString() +":\\contin\\sources\\install.wim";
             ApplyDir = @cLetter.ToString() +":\\";
             ISOLoc = @tLetter.ToString() +":\\contin\test.iso";
             ISOExtract = @tLetter.ToString() + ":\\contin\\";
-            setArgs();
+            folder = @tLetter.ToString() + ":\\contin\\"; // to here are the fixed file locations
+            setArgs(); // get the info that was passed on
             label3.Text = "Current Task: Downloading | Current Progress: estimating";
             label4.Text = "Do not panic if frozen! WinPE is not optimized for high loads!";
-
-           await Task.Run(() => Downld());
-
-            label3.Text = "Current Task: ISO check | Current Progress: estimating";
-            progressBar2.Value = 0;
-            label4.Text = "Do not panic if frozen! WinPE is not optimized for high loads!";
-           await Task.Run(() => ISOcheck());
+           await Task.Run(() => Downld()); // Download the ESD image using MSWISO
             label3.Text = "Current Task: Installing | Current Progress: estimating";
             progressBar2.Value = 0;
-            label4.Text = "Estimating progress...";
+            label4.Text = "Estimating progress..."; // from here
             label5.Visible = false;
             label6.Visible = false;
             listBox1.Visible = false;
-            button1.Visible = false;
-            await Task.Run(() => DISMDiag());
+            button1.Visible = false; // to here we hide most of the UI like the text and progress bar so that only the dialog for the Windows version is shown
+            await Task.Run(() => DISMDiag()); // start the process of showing the Windows versions avaliable
            
         }
 
-        private async Task Downld()
+        private async Task Downld() // user algo
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            
+            ProcessStartInfo startInfo = new ProcessStartInfo // from here
             {
-                FileName = @"MSWISO\MSWISO.exe",
+                FileName = folder + "\\MSWISO\\MSWISO.exe",
                 Arguments = topass,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
-            };
+            }; // to here starts MSWISO with the toPass arguments, without creating a window and redirecting the output
 
             using (Process process = new Process { StartInfo = startInfo })
             {
@@ -152,19 +152,19 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
 
                 while (!process.StandardOutput.EndOfStream)
                 {
-                    string WhtOut = process.StandardOutput.ReadLine();
+                    string WhtOut = process.StandardOutput.ReadLine(); // start reading the output
                     int giveProgress;
-                    string newOut = WhtOut.TrimEnd('%');
+                    string newOut = WhtOut.TrimEnd('%'); // remove the % as we only need an int
                     if (int.TryParse(newOut, out giveProgress))
                     {
 
                         label4.BeginInvoke(new Action(() => label4.Text = "Current progress: " + WhtOut));
                         progressBar2.BeginInvoke(new Action(() => progressBar2.Value = giveProgress));
-                        totalProg = Math.Min(giveProgress / 2, 50);
+                        totalProg = Math.Min(giveProgress / 2, 50); // As tis is task 1 of 2, we do divide by 2
                         label3.BeginInvoke(new Action(() => label3.Text = "Current Task: Downloading | Total Progress: " + totalProg + "%"));
                         progressBar1.BeginInvoke(new Action(() => progressBar1.Value = totalProg));
                     }
-                    else if (WhtOut.StartsWith("No"))
+                    else if (WhtOut.StartsWith("No")) // sometimes there is a connection time out or the version no longer exist, so we show the user the error message
                     {
                         MessageBox.Show("It looks like Microsoft no longer hosts this version... Try to not use legacy mode if possible or a different version. Press OK to restart.");
                         Process.Start("cmd.exe", "/C wpeutil reboot");
@@ -175,18 +175,17 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
                 process.Close();
             }
         }
-        private async Task DISMDiag()
+        private async Task DISMDiag() // user algo
         {
             invis = false;
-            MakeInvis(invis);
-            label5.Invoke(new Action(() => label5.Visible = true));
+            MakeInvis(invis); // make the things we don't want to show invisible
+            label5.Invoke(new Action(() => label5.Visible = true)); // from here
             listBox1.Invoke(new Action(() => listBox1.Visible = true));
-            button1.Invoke(new Action(() => button1.Visible = true));
-            string arguments;
-            string exePath = Environment.GetEnvironmentVariable("SystemRoot") + @"\System32" + @"\dism.exe";
-            if (isoYes)
+            button1.Invoke(new Action(() => button1.Visible = true)); // to here we show the dialog
+            string arguments = "n/a";
+            string exePath = Environment.GetEnvironmentVariable("SystemRoot") + @"\System32" + @"\dism.exe"; // we need to thing the path of DISM.exe
+            if (isoYes) // if we have an iso then use the location for the ISO
             {
-                MessageBox.Show(isoYes.ToString());
                 try
                 {
                     arguments = @"/get-wiminfo /wimfile:" + wimLoc;
@@ -196,14 +195,18 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
                     arguments = @"/get-wiminfo /wimfile:" + esdYes;
                 }
             }
-            else
+            else // if we have an ESD then use the location for the ESD
             {
-                arguments = @"/get-wiminfo /wimfile:" + esdNo;
+                if (File.Exists(esdNo))
+                {
+                    arguments = @"/get-wiminfo /wimfile:" + esdNo;
+                }
+               
             }
             using (Process process = new Process())
             {
-                process.StartInfo.FileName = exePath;
-                process.StartInfo.Arguments = arguments;
+                process.StartInfo.FileName = exePath; // dism
+                process.StartInfo.Arguments = arguments; // gets the wim info with the location of ESD or WIM
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -213,7 +216,7 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
                     if (e.Data != null)
                     {
                         string newOut = e.Data.ToString();
-                        string pattern = @"^Name :\s+(.+)$";
+                        string pattern = @"^Name :\s+(.+)$"; // we only want the names of the avaliable versions and not junk like dism version
 
                         Match match = Regex.Match(newOut, pattern);
                         if (match.Success)
@@ -222,7 +225,7 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
 
                             listBox1.Invoke(new Action(() =>
                             {
-                                listBox1.Items.Add(name);
+                                listBox1.Items.Add(name); // adds the matches for the windows versions
                             }));
                         }
                     }
@@ -234,11 +237,11 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
                 {
                     do
                     {
-                        Console.WriteLine("User still in progress");
+                        Console.WriteLine("User still in progress"); // this is an intentional loop because we want to install Windows once we have all the data ready. Some people, like me, have very fast internet and we have not finishes setting up our apps or drivers yet. Installing windows without this data leads to corruption.
                         System.Threading.Thread.Sleep(3000); 
                     }
-                    while (!File.Exists(Environment.SystemDirectory + "\\done.txt"));
-                    timeToDownload();
+                    while (!File.Exists(Environment.SystemDirectory + "\\done.txt")); // the setup will make a txt file as a flag to show that the install was done and you can continue.
+                    timeToDownload(); // starts countdown
                     process.Start();
                     process.BeginOutputReadLine();
                     process.WaitForExit();
@@ -248,44 +251,44 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
 
 
         }
-        private async void timeToDownload()
+        private async void timeToDownload() // once the setup has determined that the previous setup is done. We can start the AFK countdown. //simple user algo
         {
             await Task.Run(() =>
             {
                 int time = 0;
-                int timeLeft = 30;
+                int timeLeft = 30; // we give the user 30 seconds to respond
 
                 label6.BeginInvoke(new Action(() => label6.Visible = true));
                 label6.BeginInvoke(new Action(() => label6.Text = tLetter.ToString() +"EST"));
 
                 Thread countdownThread = new Thread(() =>
                 {
-                    while (timeLeft > 0)
+                    while (timeLeft > 0) // keep doing this while the time is still running
                     {
-                        if (!selectedin)
+                        if (!selectedin) // if the user hasn't selected a version yet
                         {
                             if (time < 30)
                             {
-                                timeLeft--;
+                                timeLeft--; // reduce the amount of time left
                                 time++;
                                 label6.BeginInvoke(new Action(() =>
                                 {
-                                    label6.Text = "You have " + timeLeft.ToString() + " seconds to choose or index " + (listBox1.Items.Count).ToString() + " is chosen.";
+                                    label6.Text = "You have " + timeLeft.ToString() + " seconds to choose or index " + (listBox1.Items.Count).ToString() + " is chosen."; // show the user how much time is left
                                 }));
 
-                                Thread.Sleep(1000);
+                                Thread.Sleep(1000); // wait one second
                             }
-                        } else if(selectedin)
+                        } else if(selectedin) // the user has selected a version which means they are present, stop the countdown
                         {
                             label6.BeginInvoke(new Action(() => label6.Visible = false));
                             break;
                         }
                     }
-                    if (timeLeft == 0)
+                    if (timeLeft == 0) // time is up, user has been AFK for too long
                     {
-                        label6.BeginInvoke(new Action(() => label6.Visible = false));
-                        index = listBox1.Items.Count;
-                        button1_Click(null , null);
+                        label6.BeginInvoke(new Action(() => label6.Visible = false)); // hide the warning
+                        index = listBox1.Items.Count; // we select the last version in the list as its guaranteed not to be an installer 
+                        button1_Click(null , null); // we simulate user input to click the continue button
 
                     }
                 });
@@ -297,27 +300,29 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            index = listBox1.SelectedIndex + 1;
+            index = listBox1.SelectedIndex + 1; // selects the version of windows the user wants
 
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
             invis = true;
-            selectedin = true;
-            MakeInvis(invis);
-            label5.BeginInvoke(new Action(() =>label5.Visible = false));
+            selectedin = true; // stop the countdown
+            MakeInvis(invis); // restore the UI
+            label5.BeginInvoke(new Action(() =>label5.Visible = false)); // from here
             listBox1.BeginInvoke(new Action(() => listBox1.Visible = false));
-            button1.BeginInvoke(new Action(() => button1.Visible = false));
-            await Task.Run(() => Install());
+            button1.BeginInvoke(new Action(() => button1.Visible = false)); // to here hide the DISMdiag
+            await Task.Run(() => Install()); // start the install
         }
+        
 
-        private async Task Install()
+        private async Task Install()//simple user algo
         {
-            progressBar2.Value = 0;
+            bool ignoreFirst = true;
+            progressBar2.BeginInvoke(new Action(() => progressBar2.Value = 0)); // clear any previous work
             string arguments;
-            string exePath = Environment.GetEnvironmentVariable("SystemRoot") + @"\System32" + @"\dism.exe";
-            if (isoYes)
+            string exePath = Environment.GetEnvironmentVariable("SystemRoot") + @"\System32" + @"\dism.exe"; // get location of DISM
+            if (isoYes) // the location if we have an ISO
             {
                 MessageBox.Show(isoYes.ToString());
                 try
@@ -330,15 +335,15 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
 
                 }
             }
-            else
+            else // the location if we have a ESD file
             {
                 arguments = @"/Apply-Image /Imagefile:" + esdNo + " /Index:" + index + @" /ApplyDir:" + ApplyDir;
             }
 
             using (Process process = new Process())
             {
-                process.StartInfo.FileName = exePath;
-                process.StartInfo.Arguments = arguments;
+                process.StartInfo.FileName = exePath; //DISM
+                process.StartInfo.Arguments = arguments; // Code to deploy windows using the windows version the user requested using the ESD/WIM
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -347,7 +352,7 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
                 {
                     if (e.Data != null)
                     {
-                        string pattern = @"\b\d+\b";
+                        string pattern = @"\b\d+\b"; // only want numeric items
 
                         Match match = Regex.Match(e.Data, pattern);
 
@@ -355,7 +360,26 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
                         {
                             foreach (Match m in match.Groups)
                             {
-                                progressBar1.BeginInvoke(new Action(() => progressBar2.Value = int.Parse(m.Value)));
+                                if (!string.IsNullOrEmpty(m.Value) && int.Parse(m.Value) == 10 && ignoreFirst) // When we run DISM for the first time it shows the version and the software gets confused
+                                {
+                                    ignoreFirst = false;
+                                }
+                                else if (!string.IsNullOrEmpty(m.Value) && !ignoreFirst) // only want pure data
+                                {
+                                    int prog;
+                                    if (int.TryParse(m.Value, out prog))
+                                    {
+                                        progressBar2.BeginInvoke(new Action(() => progressBar2.Value = prog));
+                                        label4.BeginInvoke(new Action(() => label4.Text = "Current progress:" + prog + "%"));
+                                        progressBar1.BeginInvoke(new Action(() => progressBar1.Value = 50 + ((progressBar1.Value + prog / 2) - progressBar1.Value))); // add onto the 50% that was done by downloading
+                                        label3.BeginInvoke(new Action(() => label3.Text = "Current Task: Installing | Total Progress: " + progressBar1.Value + "%"));
+
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Wrong input");
+                                    }
+                                }
                             }
                         }
                         else
@@ -375,7 +399,7 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
             label2.Text = "Done, rebooting now!";
             string deltemploc = cLetter.ToString() +":\\tempdelete.bat";
             string deltempcontents = @"@echo off" + Environment.NewLine +
-             @"echo select disk " + disks + " > del.txt" + Environment.NewLine + //error here
+             @"echo select disk " + disks + " > del.txt" + Environment.NewLine + 
              @"echo sel part 2 >> del.txt" + Environment.NewLine +
              @"echo delete partition override >> del.txt" + Environment.NewLine +
              @"echo sel part 1 >> del.txt " + Environment.NewLine +
@@ -383,17 +407,13 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
              @"echo exit >> del.txt" + Environment.NewLine +
              @"diskpart /s del.txt" + Environment.NewLine +
               @"del %0";
-            File.WriteAllText(deltemploc, deltempcontents);
+            File.WriteAllText(deltemploc, deltempcontents); // to here, this is the code that is generated to delete the temp drive for post setup // writing and reading a file
             if (!Directory.Exists(cLetter.ToString() +":\\Windows\\Panther"))
             {
-                Directory.CreateDirectory(cLetter.ToString() +":\\Windows\\Panther");
+                Directory.CreateDirectory(cLetter.ToString() +":\\Windows\\Panther"); // create the Panther folder so we can place the unattend script
 
             }
-            if (!Directory.Exists(cLetter.ToString() +":\\Windows\\Setup\\Scripts\\"))
-            {
-                Directory.CreateDirectory(cLetter.ToString() +":\\Windows\\Setup\\Scripts\\");
-            }
-            string xmlLoc = tLetter.ToString() +":\\contin\\unattend.xml";
+            string xmlLoc = tLetter.ToString() +":\\contin\\unattend.xml";// from here
             string xmlContent = @"<?xml version=""1.0"" encoding=""utf-8""?>" + Environment.NewLine +
             @"<unattend xmlns=""urn:schemas-microsoft-com:unattend"">" + Environment.NewLine +
             @"    <settings pass=""oobeSystem"">" + Environment.NewLine +
@@ -411,45 +431,99 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
             @"</unattend>";
             if (!isExpress)
             {
-                File.WriteAllText(xmlLoc, xmlContent);
-            } 
-            try
-            {
-                File.Move(tLetter.ToString() +":\\contin\\Extras\\setup.exe", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\Ninite.exe");
-            } catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            try
-            {
-                File.Move(tLetter.ToString() +":\\contin\\installer.bat", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\SetupComplete.cmd");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            try
-            {
-                File.Move(tLetter.ToString() +":\\contin\\autorun.exe", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\autorun.exe");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            try
-            {
-                File.Move(tLetter.ToString() +":\\contin\\test.au3", cLetter.ToString() +":\\Windows\\Setup\\Scripts\\autorun.au3");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            string outFile = @"X:\bootable.bat";
+                File.WriteAllText(xmlLoc, xmlContent); // writing and reading a file
+            } // to here, we have to make an automation script to make the temp drive delete run at OOBE. When we select clean, the user doesn't want any modifications done to their computer but we still need to do clean up.
+            else
+            { // from here
+                if (!Directory.Exists(cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\"))
+                {
+                    Directory.CreateDirectory(cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\");
+                }
+                try
+                {
+                    File.Move(tLetter.ToString() + ":\\contin\\Extras\\setup.exe", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\Ninite.exe");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    File.Move(tLetter.ToString() + ":\\contin\\installer.bat", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\SetupComplete.cmd");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    File.Move(tLetter.ToString() + ":\\contin\\autorun.exe", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\autorun.exe");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    File.Move(tLetter.ToString() + ":\\contin\\test.au3", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\autorun.au3");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    File.Move("X:\\Windows\\System32\\windowskey.txt", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\windowskey.txt");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    File.Move("X:\\Windows\\System32\\SSID.txt", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\SSID.txt");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    File.Move("X:\\Windows\\System32\\Password.txt", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\Password.txt");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    File.Move("X:\\Windows\\System32\\profile.xml", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\profile.xml");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                try
+                {
+                    using (var client = new WebClient())
+                    {
+                        client.DownloadFile("https://github.com/eliasailenei/PortableISO/releases/download/POST/Installer.zip", tLetter.ToString() + ":\\contin\\installer.zip");
+                    }
+                    ZipFile.ExtractToDirectory(tLetter.ToString() + ":\\contin\\installer.zip", cLetter.ToString() + ":\\Windows\\Setup\\Scripts\\");
+                    File.Delete(tLetter.ToString() + ":\\contin\\installer.zip");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                };
+            } // to here what we do is create the Scripts folder where we place our post setup things like our ninite or our Wi-Fi profile. We also download the post installer setup to move PortableDriver and get other things done during POST setup.
+            
+            string outFile = @"X:\bootable.bat"; // from here
             string content = "@echo off" + Environment.NewLine +
             @"ECHO Adding MBR..." + Environment.NewLine +
             @"copy " + tLetter.ToString() + ":\\contin\\unattend.xml " + cLetter.ToString() +":\\Windows\\Panther" + Environment.NewLine +
-            @cLetter.ToString() +":\\Windows\\System32\bcdboot "  + cLetter.ToString() + ":\\Windows" + Environment.NewLine +
-            @"wpeutil.exe reboot" + Environment.NewLine;
+            @cLetter.ToString() +":\\Windows\\System32\\bcdboot "  + cLetter.ToString() + ":\\Windows" + Environment.NewLine +
+            @"wpeutil reboot" + Environment.NewLine;
             File.WriteAllText(outFile, content);
             ProcessStartInfo diskp = new ProcessStartInfo();
             diskp.FileName = "cmd.exe";
@@ -460,9 +534,9 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
             diskp.RedirectStandardInput = true;
             Process diskpart = Process.Start(diskp);
             diskpart.WaitForExit();
-            string debug = diskpart.StandardOutput.ReadToEnd(); // to here, make sub. Make function to see if express.exe is done, if done continue
+            string debug = diskpart.StandardOutput.ReadToEnd();  // to here we make our drive bootable and restart the computer
         }
-        private void MakeInvis(bool invis)
+        private void MakeInvis(bool invis) // method to make the UI invisible //simple user algo
         {
             if (InvokeRequired)
             {
@@ -478,84 +552,14 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
             progressBar2.Visible = invis;
         }
 
-        private async Task ISOcheck()
-        {
-            await Task.Run(() =>
-            {
-                totalProg = 50;
-                int progress = 1;
-                progressBar2.Invoke(new Action(() => progressBar2.Value = progress));
-                label4.Invoke(new Action(() => label4.Text = "Current progress: " + progress));
-                totalProg = totalProg + progress;
-                label3.BeginInvoke(new Action(() => label3.Text = "Current Task: ISO check | Total Progress: " + totalProg + "%"));
-                string[] fileFound = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.iso");
-
-                if (fileFound != null)
-                {
-
-                    using (Process process = new Process())
-                    {
-                        process.StartInfo.FileName = "7z.exe";
-                        process.StartInfo.Arguments = @"x -o" + ISOExtract + " " + ISOLoc + " -bd -bsp1 -bso1";
-                        process.StartInfo.UseShellExecute = false;
-                        process.StartInfo.CreateNoWindow = true;
-                        process.StartInfo.RedirectStandardOutput = true;
-                        process.StartInfo.RedirectStandardError = true;
-
-                        process.OutputDataReceived += (sender, e) =>
-                        {
-                            if (e.Data != null)
-                            {
-
-                                Match match = Regex.Match(e.Data, @"\s(\d+)%");
-                                if (match.Success)
-                                {
-                                    progress = int.Parse(match.Groups[1].Value);
-
-                                    if (progress == 99)
-                                    {
-                                        progress++;
-                                    }
-                                    totalProg = 50;
-                                    if (progress >= 4)
-                                    {
-                                        int scaledValue = (int)(15 * Math.Min(1, (progress - 4) / 96.0));
-                                        totalProg = totalProg + scaledValue;
-                                    }
-                                    if (progress == 5)
-                                    {
-                                        isoYes = true;
-                                    }
-                                    totalProg = Math.Min(totalProg, 65);
-                                    label4.BeginInvoke(new Action(() => label4.Text = "Current progress: " + progress + "%"));
-                                    progressBar2.BeginInvoke(new Action(() => progressBar2.Value = progress));
-                                    label3.BeginInvoke(new Action(() => label3.Text = "Current Task: ISO extract | Total Progress: " + totalProg + "%"));
-                                    progressBar1.BeginInvoke(new Action(() => progressBar1.Value = totalProg));
-                                }
-                            }
-                        };
-
-                        process.Start();
-                        process.BeginOutputReadLine();
-                        process.WaitForExit();
-
-                    }
-                }
-                else
-                {
-                    label3.BeginInvoke(new Action(() => label3.Text = "Current Task: Skipping ISO check | Total Progress: " + totalProg));
-                }
-
-            });
-        }
         public Clean()
         {
-            InitializeComponent();
-            FormBorderStyle = FormBorderStyle.None;
-            WindowState = FormWindowState.Maximized;
-            this.Resize += Clean_rsize;
+            InitializeComponent(); // load all of our UI items
+            FormBorderStyle = FormBorderStyle.None; // do not add a border
+            WindowState = FormWindowState.Maximized; // make it full screen
+            this.Resize += Clean_rsize; // resize the UI according the screen resolution
             form = this.Size;
-            lab1 = new Rectangle(label1.Location, label1.Size);
+            lab1 = new Rectangle(label1.Location, label1.Size); // from here
             lab2 = new Rectangle(label2.Location, label2.Size);
             lab3 = new Rectangle(label3.Location, label3.Size);
             lab4 = new Rectangle(label4.Location, label4.Size);
@@ -564,16 +568,15 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
             prog1 = new Rectangle(progressBar1.Location, progressBar1.Size);
             prog2 = new Rectangle(progressBar2.Location, progressBar2.Size);
             bttn1 = new Rectangle(button1.Location, button1.Size);
-            lstbx1 = new Rectangle(listBox1.Location, listBox1.Size);
+            lstbx1 = new Rectangle(listBox1.Location, listBox1.Size); // to here we make rectangles which represent the UI 
             label5.Visible = false;
             listBox1.Visible = false;
             button1.Visible = false;
 
         }
 
-        private void Clean_rsize(object sender, EventArgs e)
-        {
-
+        private void Clean_rsize(object sender, EventArgs e)// recursive algorithm
+        { // change the size of the UI elements one by one
             resizeControl(lab1, label1);
             resizeControl(lab2, label2);
             resizeControl(lab3, label3);
@@ -589,20 +592,20 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
         private void resizeControl(Rectangle r, Control c)
         {
             float xRatio = (float)this.Width / form.Width;
-            float yRatio = (float)this.Height / form.Height;
+            float yRatio = (float)this.Height / form.Height; // get current x and y locations
 
             int newX = (int)(r.X * xRatio);
-            int newY = (int)(r.Y * yRatio);
+            int newY = (int)(r.Y * yRatio); // find the new positions
 
             int newWidth = (int)(r.Width * xRatio);
-            int newHeight = (int)(r.Height * yRatio);
+            int newHeight = (int)(r.Height * yRatio); // find the new height and width 
 
-            c.Location = new Point(newX, newY);
+            c.Location = new Point(newX, newY); // apply the new data onto the UI elements
             c.Size = new Size(newWidth, newHeight);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
-        {
+        { // fade in effect
             if (Opacity == 1)
             {
                 timer1.Stop();
@@ -611,7 +614,7 @@ esdYes = @tLetter.ToString() +":\\contin\\sources\\install.esd";
         }
 
         private void timer2_Tick(object sender, EventArgs e)
-        {
+        { // fade out effect
             if (Opacity == 0)
             {
                 this.Hide();

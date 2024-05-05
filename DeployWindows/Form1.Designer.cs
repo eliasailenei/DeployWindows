@@ -63,8 +63,9 @@ namespace DeployWindows
             this.label4.Location = new System.Drawing.Point(275, 240);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(0, 30);
+            this.label4.Size = new System.Drawing.Size(54, 30);
             this.label4.TabIndex = 25;
+            this.label4.Text = "Hey";
             // 
             // progressBar2
             // 
@@ -125,7 +126,7 @@ namespace DeployWindows
             this.listBox1.Font = new System.Drawing.Font("Microsoft YaHei", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 24;
-            this.listBox1.Location = new System.Drawing.Point(242, 97);
+            this.listBox1.Location = new System.Drawing.Point(251, 98);
             this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(242, 172);
@@ -174,7 +175,7 @@ namespace DeployWindows
             this.Controls.Add(this.button1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Clean";
-            this.Text = "Form1";
+            this.Text = "S";
             this.Load += new System.EventHandler(this.Clean_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
